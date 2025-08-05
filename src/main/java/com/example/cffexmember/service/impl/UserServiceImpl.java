@@ -25,11 +25,11 @@ public class UserServiceImpl implements UserService {
         Result<User> result = new Result<>();
         User user = userMapper.findByUsername(username);
         if (user == null) {
-            result.setSuccess(false);
+            result.setCode(-1);
             result.setMessage("用户名不存在");
             return result;
         } else if (!user.getPassword().equals(password)) {
-            result.setSuccess(false);
+            result.setCode(-1);
             result.setMessage("密码错误");
             return result;
         }
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         cookie.setPath(request.getContextPath());
         // 向客户端发送cookie
         response.addCookie(cookie);
-        result.setSuccess(true);
+        result.setCode(0);
         result.setMessage("登录成功");
         result.setData(user);
         return result;

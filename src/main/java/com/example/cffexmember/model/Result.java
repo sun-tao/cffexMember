@@ -12,7 +12,7 @@ public class Result<T> {
     /**
      * 成功状态
      */
-    private boolean success;
+    private int code;
 
     /**
      * 数据
@@ -27,7 +27,7 @@ public class Result<T> {
      */
     public static <T> Result<T> resultSuccess(String message) {
         Result<T> result = new Result<>();
-        result.setSuccess(true);
+        result.setCode(0);
         result.setMessage(message);
         result.setData(null);
         return result;
@@ -42,7 +42,7 @@ public class Result<T> {
      */
     public static <T> Result<T> resultSuccess(String message, T data) {
         Result<T> result = new Result<>();
-        result.setSuccess(true);
+        result.setCode(0);
         result.setMessage(message);
         result.setData(data);
         return result;
@@ -56,7 +56,7 @@ public class Result<T> {
      */
     public static <T> Result<T> resultFailed(String message) {
         Result<T> result = new Result<>();
-        result.setSuccess(false);
+        result.setCode(-1);
         result.setMessage(message);
         result.setData(null);
         return result;

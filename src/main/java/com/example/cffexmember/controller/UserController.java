@@ -25,8 +25,7 @@ public class UserController {
     @GetMapping("/login")
     public Result login(@RequestParam String username, @RequestParam String password,
                         HttpSession session, HttpServletRequest request, HttpServletResponse response) {
-        log.info("Login request received: username={}", username);
-        System.out.println(">>>>>> 进入 /login 控制器 <<<<<<");
+        log.info("用户登录");
         return userService.userLogin(username, password, session, request, response);
     }
 }
