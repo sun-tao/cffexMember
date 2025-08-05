@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cffexmember.mapper.ProcessNodeMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.ProcessNode">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="node_name" property="nodeName" jdbcType="VARCHAR"/>
+        <result column="node_type" property="nodeType" jdbcType="VARCHAR"/>
+        <result column="handler_group_code" property="handlerGroupCode" jdbcType="VARCHAR"/>
+        <result column="on_approve_node_id" property="onApproveNodeId" jdbcType="INTEGER"/>
+        <result column="on_reject_node_id" property="onRejectNodeId" jdbcType="INTEGER"/>
+        <result column="on_return_node_id" property="onReturnNodeId" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, node_name, node_type, handler_group_code, on_approve_node_id, on_reject_node_id, on_return_node_id
+    </sql>
+    
+    <insert id="insert" parameterType="com.example.cffexmember.entity.ProcessNode" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_process_nodes (
+            node_name, node_type, handler_group_code, on_approve_node_id, on_reject_node_id, on_return_node_id
+        ) VALUES (
+            #{nodeName}, #{nodeType}, #{handlerGroupCode}, #{onApproveNodeId}, #{onRejectNodeId}, #{onReturnNodeId}
+        )
+    </insert>
+    
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_process_nodes
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectByNodeType" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_process_nodes
+        WHERE node_type = #{nodeType}
+        ORDER BY id
+    </select>
+    
+    <select id="selectByHandlerGroupCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_process_nodes
+        WHERE handler_group_code = #{handlerGroupCode}
+        LIMIT 1
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_process_nodes
+        ORDER BY id
+    </select>
+    
+    <update id="update" parameterType="com.example.cffexmember.entity.ProcessNode">
+        UPDATE t_process_nodes
+        SET node_name = #{nodeName},
+            node_type = #{nodeType},
+            handler_group_code = #{handlerGroupCode},
+            on_approve_node_id = #{onApproveNodeId},
+            on_reject_node_id = #{onRejectNodeId},
+            on_return_node_id = #{onReturnNodeId}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        DELETE FROM t_process_nodes
+        WHERE id = #{id}
+    </delete>
+    
+</mapper> 

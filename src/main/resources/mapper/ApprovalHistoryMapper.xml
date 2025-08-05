@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cffexmember.mapper.ApprovalHistoryMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.ApprovalHistory">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="application_id" property="applicationId" jdbcType="INTEGER"/>
+        <result column="task_id" property="taskId" jdbcType="INTEGER"/>
+        <result column="operator_id" property="operatorId" jdbcType="INTEGER"/>
+        <result column="operator_name" property="operatorName" jdbcType="VARCHAR"/>
+        <result column="operator_group_code" property="operatorGroupCode" jdbcType="VARCHAR"/>
+        <result column="operation_type" property="operationType" jdbcType="VARCHAR"/>
+        <result column="comments" property="comments" jdbcType="VARCHAR"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, application_id, task_id, operator_id, operator_name, operator_group_code, operation_type, comments, ctime
+    </sql>
+    
+    <insert id="insert" parameterType="com.example.cffexmember.entity.ApprovalHistory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_approval_history (
+            application_id, task_id, operator_id, operator_name, operator_group_code, operation_type, comments, ctime
+        ) VALUES (
+            #{applicationId}, #{taskId}, #{operatorId}, #{operatorName}, #{operatorGroupCode}, #{operationType}, #{comments}, #{ctime}
+        )
+    </insert>
+    
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_history
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectByApplicationId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_history
+        WHERE application_id = #{applicationId}
+        ORDER BY ctime
+    </select>
+    
+    <select id="selectByTaskId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_history
+        WHERE task_id = #{taskId}
+        ORDER BY ctime
+    </select>
+    
+    <select id="selectByOperatorId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_history
+        WHERE operator_id = #{operatorId}
+        ORDER BY ctime DESC
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_history
+        ORDER BY ctime DESC
+    </select>
+    
+</mapper> 
