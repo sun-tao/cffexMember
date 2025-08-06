@@ -28,4 +28,9 @@ public class UserController {
         log.info("用户登录");
         return userService.userLogin(username, password, session, request, response);
     }
+
+    @GetMapping("/loginPage")
+    public String loginPage() {
+        return "loginPage";
+    }
 }

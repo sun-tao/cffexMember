@@ -37,6 +37,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             for (Cookie cookie : cookies) {
                 //有登录，则放行
                 if ("cookie".equals(cookie.getName())) {
+                    log.info("用户已登录，放行");
                     cookie.setMaxAge(30 * 60);
                     response.addCookie(cookie);
                     return true;
@@ -44,7 +45,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
         }
         //没有登录，跳转到登录页
-        response.sendRedirect("/login");
+        response.sendRedirect("/loginPage");
         return false;
     }
 

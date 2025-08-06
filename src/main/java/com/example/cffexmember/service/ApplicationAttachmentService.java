@@ -68,7 +68,7 @@ public class ApplicationAttachmentService {
 
     public ApplicationAttachment saveAttachment(MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        String storagePath = uploadFilePath + fileName;
+        String storagePath = uploadFilePath + "/" + fileName;
         try {
             file.transferTo(new File(storagePath));
             ApplicationAttachment attachment = new ApplicationAttachment();

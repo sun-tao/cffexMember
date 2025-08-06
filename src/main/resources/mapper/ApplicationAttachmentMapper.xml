@@ -37,9 +37,9 @@
     
     <insert id="insert" parameterType="com.example.cffexmember.entity.ApplicationAttachment" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_application_attachments (
-            attachment_id, file_name, storage_path, download_url
+            file_name, storage_path, download_url
         ) VALUES (
-            #{attachmentId}, #{fileName}, #{storagePath}, #{downloadUrl}
+            #{fileName}, #{storagePath}, #{downloadUrl}
         )
     </insert>
     
