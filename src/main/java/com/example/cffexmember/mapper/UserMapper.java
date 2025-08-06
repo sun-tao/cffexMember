@@ -48,5 +48,5 @@ public interface UserMapper {
      */
     int deleteById(@Param("id") Integer id);
 
-    LoginUser findByUsername(String username);
+    User findByUsername(String username);
 } 

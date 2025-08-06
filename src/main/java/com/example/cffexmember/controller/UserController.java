@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 
 
 @RestController
-@RequestMapping
+@RequestMapping("/")
 @Slf4j
 public class UserController {
 
