@@ -22,8 +22,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         ir.excludePathPatterns(
                 "/login",
                 "/login/**",
-                "/logout",
-                "/logout/",
                 // 排除静态资源
                 "/static/**",
                 "/resources/**"

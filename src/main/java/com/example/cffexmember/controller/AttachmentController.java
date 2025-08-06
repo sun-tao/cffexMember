@@ -3,20 +3,26 @@ package com.example.cffexmember.controller;
 import com.example.cffexmember.entity.ApplicationAttachment;
 import com.example.cffexmember.model.Result;
 import com.example.cffexmember.service.ApplicationAttachmentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
+@RestController
+@RequestMapping("/")
+@Slf4j
 public class AttachmentController {
 
     @Autowired
     private ApplicationAttachmentService applicationAttachmentService;
 
-    @Value("${file.upload.url}")
+    @Value("${file.upload-dir}")
     private String uploadFilePath;
 
     @PostMapping("/uploadfile")
