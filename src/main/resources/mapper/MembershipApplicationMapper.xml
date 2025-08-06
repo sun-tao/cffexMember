@@ -44,7 +44,7 @@
 <!--        ORDER BY ctime DESC-->
 <!--    </select>-->
 
-    <select id="" resultMap="BaseResultMap">
+    <select id="selectByApplicantUserId" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_membership_application
         <where>

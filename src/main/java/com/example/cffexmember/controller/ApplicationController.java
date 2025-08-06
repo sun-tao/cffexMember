@@ -1,9 +1,6 @@
 package com.example.cffexmember.controller;
 
-import com.example.cffexmember.dto.ApiResponse;
-import com.example.cffexmember.dto.ApplicationOverView;
-import com.example.cffexmember.dto.ApplicationRequest;
-import com.example.cffexmember.dto.ApplicationDetailResponse;
+import com.example.cffexmember.dto.*;
 import com.example.cffexmember.entity.ApplicationRecord;
 import com.example.cffexmember.entity.MembershipApplication;
 import com.example.cffexmember.entity.ApplicationAttachment;
@@ -120,21 +117,18 @@ public class ApplicationController {
      * 根据申请人ID查询申请列表
      */
     @GetMapping("/application/queryAll")
-    public ApiResponse<ApplicationOverView> getApplicationsByApplicantUserId(@RequestParam(required = false) String status,@RequestParam int pageNo,@RequestParam int pageSize) {
+    public ApiResponse<PageResponse<ApplicationRecord>> getApplicationsByApplicantUserId(@RequestParam(required = false) String status,@RequestParam int pageNo,@RequestParam int pageSize) {
         try {
             // TODO:从session中拿,先mock
             int applicantUserId = 1; // 会员
             List<MembershipApplication> applications = applicationService.getApplicationsByApplicantUserId(applicantUserId,status,pageNo,pageSize);
             int total = applicationService.getTotalApplication(applicantUserId,status);
-            ApplicationOverView applicationOverView = new ApplicationOverView();
-            applicationOverView.setPageNo(pageNo);
-            applicationOverView.setPageSize(pageSize);
-            applicationOverView.setTotal(total);
             List<ApplicationRecord> applicationRecords = new ArrayList<>();
             for (MembershipApplication application : applications){
                 ApplicationRecord applicationRecord = new ApplicationRecord();
                 applicationRecord.setApplicationId(application.getId());
                 applicationRecord.setStatus(application.getStatus());
+                applicationRecord.setMemberName(getMemberNameByApplication(application));
                 // 定义格式
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 // 转换为字符串
@@ -142,8 +136,9 @@ public class ApplicationController {
                 applicationRecord.setSubmitAt(dateString);
                 applicationRecords.add(applicationRecord);
             }
-            applicationOverView.setApplicationRecord(applicationRecords);
-            return ApiResponse.success(applicationOverView);
+            // 创建分页响应
+            PageResponse<ApplicationRecord> pageResponse = new PageResponse<>(applicationRecords, pageNo, pageSize, total);
+            return ApiResponse.success(pageResponse);
         } catch (Exception e) {
             return ApiResponse.error("查询申请列表失败: " + e.getMessage());
         }
@@ -173,5 +168,17 @@ public class ApplicationController {
         } catch (Exception e) {
             return ApiResponse.error("查询申请列表失败: " + e.getMessage());
         }
+    }
+
+    private String getMemberNameByApplication(MembershipApplication application){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode formDataNode = objectMapper.readTree(application.getFormData());
+            return formDataNode.has("memberName") ? formDataNode.get("memberName").asText() : "";
+        } catch (Exception e) {
+            // 如果JSON解析失败，创建空的formData
+            log.error("ApprovalController中getMemberNameByApplication的formData的json无法解析");
+        }
+        return "";
     }
 } 
