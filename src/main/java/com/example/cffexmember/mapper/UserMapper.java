@@ -1,5 +1,6 @@
 package com.example.cffexmember.mapper;
 
+import com.example.cffexmember.entity.LoginUser;
 import com.example.cffexmember.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -46,4 +47,6 @@ public interface UserMapper {
      * 删除用户
      */
     int deleteById(@Param("id") Integer id);
+
+    LoginUser findByUsername(String username);
 } 

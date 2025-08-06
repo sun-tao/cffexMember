@@ -1,5 +1,6 @@
 package com.example.cffexmember.service;
 
+import com.example.cffexmember.entity.LoginUser;
 import com.example.cffexmember.entity.User;
 import com.example.cffexmember.mapper.UserMapper;
 import com.example.cffexmember.model.Result;
@@ -26,8 +27,8 @@ public class UserService {
     /**
      * 根据用户名查询用户
      */
-    public User findByUsername(String username) {
-        return userMapper.selectByUsername(username);
+    public LoginUser findByUsername(String username) {
+        return userMapper.findByUsername(username);
     }
     
     /**
@@ -63,8 +64,8 @@ public class UserService {
                      HttpSession session,
                      HttpServletRequest request,
                      HttpServletResponse response){
-        Result<User> result = new Result<>();
-        User user = userMapper.selectByUsername(username);
+        Result<LoginUser> result = new Result<>();
+        LoginUser user = userMapper.findByUsername(username);
         if (user == null) {
             result.setCode(-1);
             result.setMessage("用户名不存在");
