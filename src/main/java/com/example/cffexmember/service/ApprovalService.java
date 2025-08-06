@@ -57,11 +57,18 @@ public class ApprovalService {
                 return handleApprove(application, currentNode);
             case "REJECT":
                 return handleReject(application, currentNode);
-            case "RETURN":
-                return handleReturn(application, currentNode);
+//            case "RETURN":
+//                return handleReturn(application, currentNode);
             default:
                 throw new IllegalArgumentException("不支持的操作类型: " + history.getOperationType());
         }
+    }
+    
+    /**
+     * 根据申请ID和节点名称查找待处理任务
+     */
+    public ApprovalTask getPendingTaskByApplicationAndNode(Integer applicationId, String nodeName) {
+        return approvalTaskMapper.selectPendingByApplicationAndNode(applicationId, nodeName);
     }
     
     /**
@@ -91,7 +98,9 @@ public class ApprovalService {
      */
     private boolean handleReject(MembershipApplication application, ProcessNode currentNode) {
         // 申请被拒绝，流程结束
+        ProcessNode rejectNode = processNodeMapper.selectById(currentNode.getOnRejectNodeId());
         application.setStatus("REJECTED");
+        application.setCurrentNodeId(rejectNode.getId());
         applicationMapper.update(application);
         return true;
     }

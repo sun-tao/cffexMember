@@ -50,10 +50,11 @@ public class ApprovalController {
     @PostMapping("/approve")
     public ApiResponse<Boolean> approve(@Valid @RequestBody ApprovalRequest request) {
         try {
-
+            // TODO: 从登陆信息中获取用户信息
             Integer currentUserId = 2;
-            String currentUsername = "test";
-            String currentUserGroupCode = "test";
+            String currentUsername = "trade_junior001";
+            String currentUserGroupCode = "trade_dept_junior";
+            
             if (currentUserId == null || currentUsername == null || currentUserGroupCode == null) {
                 return ApiResponse.error(401, "用户信息不完整");
             }
@@ -62,13 +63,28 @@ public class ApprovalController {
             if ("member".equals(currentUserGroupCode)) {
                 return ApiResponse.error(403, "会员不能进行审批操作");
             }
+
+            // TODO: 这个应该从结点配置表中查
+            // 1. 根据当前用户组查找对应的节点名称
+            String nodeName = getNodeNameByUserGroup(currentUserGroupCode);
+            if (nodeName == null) {
+                return ApiResponse.error(400, "未找到对应的审批节点");
+            }
             
+            // 2. 查找当前用户要处理的任务
+            ApprovalTask currentTask = approvalService.getPendingTaskByApplicationAndNode(
+                request.getApplicationId(), nodeName);
+            if (currentTask == null) {
+                return ApiResponse.error(404, "未找到待处理的任务");
+            }
+            
+            // 3. 创建审批历史记录
             ApprovalHistory history = new ApprovalHistory(
                 request.getApplicationId(),
-                request.getTaskId(),
-                currentUserId, // 使用当前用户ID
-                currentUsername, // 使用当前用户名
-                currentUserGroupCode, // 使用当前用户组
+                currentTask.getId(), // 使用找到的任务ID
+                currentUserId,
+                currentUsername,
+                currentUserGroupCode,
                 request.getOperationType(),
                 request.getComments()
             );
@@ -76,6 +92,7 @@ public class ApprovalController {
             boolean result = approvalService.approve(history);
             return ApiResponse.success(result);
         } catch (Exception e) {
+            log.error("审批操作失败", e);
             return ApiResponse.error("审批操作失败: " + e.getMessage());
         }
     }
@@ -168,5 +185,25 @@ public class ApprovalController {
             log.error("ApprovalController中getMemberNameByApplication的formData的json无法解析");
         }
         return "";
+    }
+    
+    /**
+     * 根据用户组代码获取对应的节点名称
+     */
+    private String getNodeNameByUserGroup(String userGroupCode) {
+        switch (userGroupCode) {
+            case "trade_dept_junior":
+                return "trade_dept_junior";
+            case "trade_dept_senior":
+                return "trade_dept_senior";
+            case "clearing_dept_junior":
+                return "clearing_dept_junior";
+            case "clearing_dept_senior":
+                return "clearing_dept_senior";
+            case "management":
+                return "management";
+            default:
+                return null;
+        }
     }
 } 

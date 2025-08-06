@@ -60,6 +60,15 @@
         WHERE p.handler_group_code = #{handlerGroupCode} AND t.task_status = 'PENDING'
     </select>
     
+    <select id="selectPendingByApplicationAndNode" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_tasks
+        WHERE application_id = #{applicationId} 
+        AND node_name = #{nodeName} 
+        AND task_status = 'PENDING'
+        LIMIT 1
+    </select>
+    
     <select id="selectAll" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_approval_tasks

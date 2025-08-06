@@ -9,9 +9,6 @@ public class ApprovalRequest {
     @NotNull(message = "申请ID不能为空")
     private Integer applicationId;
     
-    @NotNull(message = "任务ID不能为空")
-    private Integer taskId;
-    
     @NotNull(message = "操作类型不能为空")
     private String operationType; // APPROVE, REJECT, RETURN
     
@@ -20,9 +17,8 @@ public class ApprovalRequest {
     // 构造函数
     public ApprovalRequest() {}
 
-    public ApprovalRequest(Integer applicationId, Integer taskId, String operationType, String comments) {
+    public ApprovalRequest(Integer applicationId, String operationType, String comments) {
         this.applicationId = applicationId;
-        this.taskId = taskId;
         this.operationType = operationType;
         this.comments = comments;
     }
@@ -34,14 +30,6 @@ public class ApprovalRequest {
 
     public void setApplicationId(Integer applicationId) {
         this.applicationId = applicationId;
-    }
-
-    public Integer getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(Integer taskId) {
-        this.taskId = taskId;
     }
 
     public String getOperationType() {
@@ -64,7 +52,6 @@ public class ApprovalRequest {
     public String toString() {
         return "ApprovalRequest{" +
                 "applicationId=" + applicationId +
-                ", taskId=" + taskId +
                 ", operationType='" + operationType + '\'' +
                 ", comments='" + comments + '\'' +
                 '}';

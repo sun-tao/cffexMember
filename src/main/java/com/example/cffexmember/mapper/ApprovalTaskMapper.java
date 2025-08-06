@@ -53,6 +53,12 @@ public interface ApprovalTaskMapper {
     long countPendingByHandlerGroup(@Param("handlerGroupCode") String handlerGroupCode);
     
     /**
+     * 根据申请ID和节点名称查询待处理任务
+     */
+    ApprovalTask selectPendingByApplicationAndNode(@Param("applicationId") Integer applicationId, 
+                                                 @Param("nodeName") String nodeName);
+    
+    /**
      * 查询所有任务
      */
     List<ApprovalTask> selectAll();
