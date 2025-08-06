@@ -140,19 +140,7 @@ public class ApprovalController {
             return ApiResponse.error("查询待处理任务失败: " + e.getMessage());
         }
     }
-    
-    /**
-     * 根据申请ID查询任务列表
-     */
-    @GetMapping("/tasks/application/{applicationId}")
-    public ApiResponse<List<ApprovalTask>> getTasksByApplicationId(@PathVariable Integer applicationId) {
-        try {
-            List<ApprovalTask> tasks = approvalService.getTasksByApplicationId(applicationId);
-            return ApiResponse.success(tasks);
-        } catch (Exception e) {
-            return ApiResponse.error("查询任务列表失败: " + e.getMessage());
-        }
-    }
+
     
     /**
      * 根据申请ID查询审批历史
@@ -228,25 +216,5 @@ public class ApprovalController {
             log.error("ApprovalController中getMemberNameByApplication的formData的json无法解析");
         }
         return "";
-    }
-    
-    /**
-     * 根据用户组代码获取对应的节点名称
-     */
-    private String getNodeNameByUserGroup(String userGroupCode) {
-        switch (userGroupCode) {
-            case "trade_dept_junior":
-                return "trade_dept_junior";
-            case "trade_dept_senior":
-                return "trade_dept_senior";
-            case "clearing_dept_junior":
-                return "clearing_dept_junior";
-            case "clearing_dept_senior":
-                return "clearing_dept_senior";
-            case "management":
-                return "management";
-            default:
-                return null;
-        }
     }
 } 

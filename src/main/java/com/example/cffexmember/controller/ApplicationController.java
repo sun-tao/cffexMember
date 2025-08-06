@@ -143,32 +143,7 @@ public class ApplicationController {
             return ApiResponse.error("查询申请列表失败: " + e.getMessage());
         }
     }
-    
-    /**
-     * 根据状态查询申请列表
-     */
-    @GetMapping("/status/{status}")
-    public ApiResponse<List<MembershipApplication>> getApplicationsByStatus(@PathVariable String status) {
-        try {
-            List<MembershipApplication> applications = applicationService.getApplicationsByStatus(status);
-            return ApiResponse.success(applications);
-        } catch (Exception e) {
-            return ApiResponse.error("查询申请列表失败: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * 查询所有申请
-     */
-    @GetMapping("/all")
-    public ApiResponse<List<MembershipApplication>> getAllApplications() {
-        try {
-            List<MembershipApplication> applications = applicationService.getAllApplications();
-            return ApiResponse.success(applications);
-        } catch (Exception e) {
-            return ApiResponse.error("查询申请列表失败: " + e.getMessage());
-        }
-    }
+
 
     private String getMemberNameByApplication(MembershipApplication application){
         try {
