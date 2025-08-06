@@ -75,17 +75,16 @@ public class ApprovalService {
      * 处理通过操作
      */
     private boolean handleApprove(MembershipApplication application, ProcessNode currentNode) {
-        if ("END".equals(currentNode.getNodeType())) {
+        ProcessNode nextNode = processNodeMapper.selectById(currentNode.getOnApproveNodeId());
+        if ("END".equals(nextNode.getNodeType())) {
             // 流程结束，申请通过
             application.setStatus("APPROVED");
             applicationMapper.update(application);
             return true;
         } else {
-            // 创建下一个任务
-            ProcessNode nextNode = processNodeMapper.selectById(currentNode.getOnApproveNodeId());
             ApprovalTask nextTask = new ApprovalTask(application.getId(), nextNode.getId(), nextNode.getNodeName());
+            // 创建下一个任务
             approvalTaskMapper.insert(nextTask);
-            
             // 更新申请当前节点
             application.setCurrentNodeId(nextNode.getId());
             applicationMapper.update(application);

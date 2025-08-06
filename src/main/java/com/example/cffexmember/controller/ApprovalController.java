@@ -53,9 +53,9 @@ public class ApprovalController {
     public ApiResponse<Boolean> approve(@Valid @RequestBody ApprovalRequest request) {
         try {
             // TODO: 从登陆信息中获取用户信息
-            Integer currentUserId = 2;
-            String currentUsername = "trade_junior001";
-            String currentUserGroupCode = "trade_dept_junior";
+            Integer currentUserId = 6;
+            String currentUsername = "manager001";
+            String currentUserGroupCode = "management";
             
             if (currentUserId == null || currentUsername == null || currentUserGroupCode == null) {
                 return ApiResponse.error(401, "用户信息不完整");
