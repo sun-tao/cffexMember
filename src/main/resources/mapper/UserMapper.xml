@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cffexmember.mapper.UserMapper">
-    
+
     <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.User">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="username" property="username" jdbcType="VARCHAR"/>
         <result column="user_group_code" property="usergroupCode" jdbcType="VARCHAR"/>
         <result column="user_group_name" property="usergroupName" jdbcType="VARCHAR"/>
     </resultMap>
-    
+
     <sql id="Base_Column_List">
         id, username, user_group_code, user_group_name
     </sql>
-    
+
     <insert id="insert" parameterType="com.example.cffexmember.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users (
             username, usergroup_code, usergroup_name
@@ -20,32 +20,32 @@
             #{username}, #{password}, #{usergroupCode}, #{usergroupName}
         )
     </insert>
-    
+
     <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM users
         WHERE id = #{id}
     </select>
-    
+
     <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM users
         WHERE username = #{username}
     </select>
-    
+
     <select id="selectByUsergroupCode" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM users
         WHERE usergroup_code = #{usergroupCode}
         ORDER BY id
     </select>
-    
+
     <select id="selectAll" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM users
         ORDER BY id
     </select>
-    
+
     <update id="update" parameterType="com.example.cffexmember.entity.User">
         UPDATE users
         SET username = #{username},
@@ -54,10 +54,10 @@
             usergroup_name = #{usergroupName}
         WHERE id = #{id}
     </update>
-    
+
     <delete id="deleteById" parameterType="java.lang.Integer">
         DELETE FROM users
         WHERE id = #{id}
     </delete>
-    
-</mapper> 
+
+</mapper>
