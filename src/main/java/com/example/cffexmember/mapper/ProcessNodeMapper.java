@@ -33,6 +33,11 @@ public interface ProcessNodeMapper {
     ProcessNode selectByHandlerGroupCode(@Param("handlerGroupCode") String handlerGroupCode);
     
     /**
+     * 根据节点名称查询节点
+     */
+    ProcessNode selectByNodeName(@Param("nodeName") String nodeName);
+    
+    /**
      * 查询所有节点
      */
     List<ProcessNode> selectAll();

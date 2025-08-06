@@ -44,6 +44,13 @@
         LIMIT 1
     </select>
     
+    <select id="selectByNodeName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_process_nodes
+        WHERE node_name = #{nodeName}
+        LIMIT 1
+    </select>
+    
     <select id="selectAll" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_process_nodes

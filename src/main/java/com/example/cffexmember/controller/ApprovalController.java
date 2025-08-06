@@ -12,6 +12,7 @@ import com.example.cffexmember.entity.MembershipApplication;
 import com.example.cffexmember.service.ApprovalService;
 import com.example.cffexmember.service.UserService;
 import com.example.cffexmember.service.MembershipApplicationService;
+import com.example.cffexmember.service.ProcessNodeService;
 //import com.example.cffexmember.util.SecurityUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,6 +44,9 @@ public class ApprovalController {
     @Autowired
     private MembershipApplicationService applicationService;
     
+    @Autowired
+    private ProcessNodeService processNodeService;
+    
 //    @Autowired
 //    private SecurityUtil securityUtil;
     
@@ -66,9 +70,8 @@ public class ApprovalController {
                 return ApiResponse.error(403, "会员不能进行审批操作");
             }
 
-            // TODO: 这个应该从结点配置表中查
             // 1. 根据当前用户组查找对应的节点名称
-            String nodeName = getNodeNameByUserGroup(currentUserGroupCode);
+            String nodeName = processNodeService.getNodeNameByHandlerGroupCode(currentUserGroupCode);
             if (nodeName == null) {
                 return ApiResponse.error(400, "未找到对应的审批节点");
             }
@@ -191,7 +194,7 @@ public class ApprovalController {
                 }
                 
                 // 获取节点名称
-                String nodeName = getNodeNameByUserGroup(history.getOperatorGroupCode());
+                String nodeName = processNodeService.getNodeNameByHandlerGroupCode(history.getOperatorGroupCode());
                 
                 ApprovalHistoryItem item = new ApprovalHistoryItem(
                     history.getId(),
