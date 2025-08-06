@@ -6,16 +6,20 @@
 
 ## 主要功能
 
-1. **会员申请提交** - 会员可以提交入会申请
-2. **多部门审批流转** - 支持交易部、结算部等多个部门的审批流程
-3. **审批历史记录** - 完整的审批历史追踪
-4. **状态管理** - 申请状态实时更新
+1. **用户认证与授权** - 基于Spring Security的用户登录和权限控制
+2. **会员申请提交** - 会员可以提交入会申请
+3. **多部门审批流转** - 支持交易部、结算部等多个部门的审批流程
+4. **审批历史记录** - 完整的审批历史追踪
+5. **状态管理** - 申请状态实时更新
+6. **会话管理** - 基于Session的用户会话管理
 
 ## 技术栈
 
 - **后端框架**: Spring Boot 2.6.13
 - **数据库**: MySQL 8.0
 - **ORM框架**: MyBatis
+- **安全框架**: Spring Security
+- **会话管理**: Spring Session
 - **Java版本**: JDK 1.8
 
 ## 项目结构
@@ -92,9 +96,16 @@ mvn spring-boot:run
 
 ## API接口
 
+### 认证相关接口
+
+- `POST /api/auth/login` - 用户登录
+- `POST /api/auth/logout` - 用户登出
+- `GET /api/auth/current` - 获取当前用户信息
+- `GET /api/auth/check` - 检查登录状态
+
 ### 申请相关接口
 
-- `POST /api/applications/submit` - 提交申请
+- `POST /api/applications/submit` - 提交申请（需要会员权限）
 - `GET /api/applications/{id}` - 查询申请详情
 - `GET /api/applications/applicant/{applicantUserId}` - 查询申请人的申请列表
 - `GET /api/applications/status/{status}` - 根据状态查询申请列表
@@ -102,7 +113,7 @@ mvn spring-boot:run
 
 ### 审批相关接口
 
-- `POST /api/approvals/approve` - 审批操作
+- `POST /api/approvals/approve` - 审批操作（需要审批权限）
 - `GET /api/approvals/tasks/pending/{handlerGroupCode}` - 查询待处理任务
 - `GET /api/approvals/tasks/application/{applicationId}` - 查询申请的任务列表
 - `GET /api/approvals/history/application/{applicationId}` - 查询申请审批历史
@@ -110,7 +121,7 @@ mvn spring-boot:run
 
 ## 测试数据
 
-系统初始化时会创建以下测试用户：
+系统初始化时会创建以下测试用户（密码都是123456）：
 
 - `member001` - 会员
 - `trade_junior001` - 交易部初审
@@ -121,32 +132,44 @@ mvn spring-boot:run
 
 ## 使用示例
 
-### 1. 提交申请
+### 1. 用户登录
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=member001&password=123456"
+```
+
+### 2. 提交申请（需要先登录）
 
 ```bash
 curl -X POST http://localhost:8080/api/applications/submit \
   -H "Content-Type: application/json" \
+  -H "Cookie: JSESSIONID=your_session_id" \
   -d '{
-    "applicantUserId": 1,
-    "applicantUserName": "张三",
     "formData": "{\"company\":\"测试公司\",\"contact\":\"13800138000\"}"
   }'
 ```
 
-### 2. 审批操作
+### 3. 审批操作（需要先登录）
 
 ```bash
 curl -X POST http://localhost:8080/api/approvals/approve \
   -H "Content-Type: application/json" \
+  -H "Cookie: JSESSIONID=your_session_id" \
   -d '{
     "applicationId": 1,
     "taskId": 1,
-    "operatorId": 2,
-    "operatorName": "交易部初审员",
-    "operatorGroupCode": "trade_dept_junior",
     "operationType": "APPROVE",
     "comments": "材料齐全，同意通过"
   }'
+```
+
+### 4. 获取当前用户信息
+
+```bash
+curl -X GET http://localhost:8080/api/auth/current \
+  -H "Cookie: JSESSIONID=your_session_id"
 ```
 
 ## 开发说明
@@ -169,7 +192,11 @@ curl -X POST http://localhost:8080/api/approvals/approve \
 1. 确保数据库连接配置正确
 2. 审批流程严格按照节点配置执行
 3. 所有操作都有完整的日志记录
-4. 建议在生产环境中添加权限验证
+4. 用户必须先登录才能访问API接口
+5. 不同用户组有不同的权限：
+   - 会员：只能提交申请
+   - 审批人员：只能进行审批操作
+6. 建议在生产环境中添加HTTPS和更严格的权限验证
 
 ## 许可证
 

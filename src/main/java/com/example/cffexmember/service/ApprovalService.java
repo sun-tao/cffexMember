@@ -110,8 +110,17 @@ public class ApprovalService {
     /**
      * 根据处理人组查询待处理任务
      */
-    public List<ApprovalTask> getPendingTasksByHandlerGroup(String handlerGroupCode) {
-        return approvalTaskMapper.selectPendingByHandlerGroup(handlerGroupCode);
+    public List<ApprovalTask> getPendingTasksByHandlerGroup(String handlerGroupCode,int pageNo,int pageSize) {
+        int offset = (pageNo - 1) * pageSize;
+        int limit = pageSize;
+        return approvalTaskMapper.selectPendingByHandlerGroup(handlerGroupCode,offset,limit);
+    }
+    
+    /**
+     * 根据处理人组查询待处理任务总数
+     */
+    public long getTotalPendingTasks(String handlerGroupCode) {
+        return approvalTaskMapper.countPendingByHandlerGroup(handlerGroupCode);
     }
     
     /**

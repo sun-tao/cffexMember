@@ -44,12 +44,20 @@
         LIMIT 1
     </select>
     
-    <select id="selectPendingByHandlerGroup" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectPendingByHandlerGroup" resultMap="BaseResultMap">
         SELECT t.id, t.application_id, t.node_id, t.node_name, t.task_status, t.ctime, t.mtime
         FROM t_approval_tasks t
         INNER JOIN t_process_nodes p ON t.node_id = p.id
         WHERE p.handler_group_code = #{handlerGroupCode} AND t.task_status = 'PENDING'
         ORDER BY t.ctime
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <select id="countPendingByHandlerGroup" parameterType="java.lang.String" resultType="long">
+        SELECT COUNT(*)
+        FROM t_approval_tasks t
+        INNER JOIN t_process_nodes p ON t.node_id = p.id
+        WHERE p.handler_group_code = #{handlerGroupCode} AND t.task_status = 'PENDING'
     </select>
     
     <select id="selectAll" resultMap="BaseResultMap">

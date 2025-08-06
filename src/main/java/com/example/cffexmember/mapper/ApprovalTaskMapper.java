@@ -45,7 +45,12 @@ public interface ApprovalTaskMapper {
     /**
      * 根据处理人组代码查询待处理任务
      */
-    List<ApprovalTask> selectPendingByHandlerGroup(@Param("handlerGroupCode") String handlerGroupCode);
+    List<ApprovalTask> selectPendingByHandlerGroup(@Param("handlerGroupCode") String handlerGroupCode,@Param("offset") int offset,@Param("limit") int pageSize);
+    
+    /**
+     * 根据处理人组代码查询待处理任务总数
+     */
+    long countPendingByHandlerGroup(@Param("handlerGroupCode") String handlerGroupCode);
     
     /**
      * 查询所有任务

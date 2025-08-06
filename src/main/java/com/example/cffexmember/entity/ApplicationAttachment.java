@@ -5,7 +5,6 @@ package com.example.cffexmember.entity;
  */
 public class ApplicationAttachment {
     private Integer id;
-    private Integer attachmentId;
     private String fileName;
     private String storagePath;
     private String downloadUrl;
@@ -26,14 +25,6 @@ public class ApplicationAttachment {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getAttachmentId() {
-        return attachmentId;
-    }
-
-    public void setAttachmentId(Integer attachmentId) {
-        this.attachmentId = attachmentId;
     }
 
     public String getFileName() {
@@ -64,7 +55,6 @@ public class ApplicationAttachment {
     public String toString() {
         return "ApplicationAttachment{" +
                 "id=" + id +
-                ", attachmentId=" + attachmentId +
                 ", fileName='" + fileName + '\'' +
                 ", storagePath='" + storagePath + '\'' +
                 ", downloadUrl='" + downloadUrl + '\'' +

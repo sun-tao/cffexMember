@@ -60,8 +60,14 @@ public class MembershipApplicationService {
     /**
      * 根据申请人ID查询申请列表
      */
-    public List<MembershipApplication> getApplicationsByApplicantUserId(Integer applicantUserId) {
-        return applicationMapper.selectByApplicantUserId(applicantUserId);
+    public List<MembershipApplication> getApplicationsByApplicantUserId(Integer applicantUserId,String status,int pageNo,int pageSize) {
+        int offset = (pageNo - 1) * pageSize;
+        int limit = pageSize;
+        return applicationMapper.selectByApplicantUserId(applicantUserId,status,offset,limit);
+    }
+
+    public int getTotalApplication(Integer applicantUserId,String status){
+        return applicationMapper.selectTotalApplication(applicantUserId,status);
     }
     
     /**

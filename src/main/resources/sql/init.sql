@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS t_approval_history (
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '用户id',
     username VARCHAR(100) NOT NULL UNIQUE COMMENT '用户名',
+    password VARCHAR(255) NOT NULL COMMENT '密码',
     usergroup_code VARCHAR(50) NOT NULL COMMENT '用户组代码',
     usergroup_name VARCHAR(100) NOT NULL COMMENT '用户组名称',
     INDEX idx_usergroup_code (usergroup_code)
@@ -95,11 +96,11 @@ INSERT INTO t_process_nodes (id, node_name, node_type, handler_group_code, on_ap
 (10006, 'member_modify', 'PROCESSING', 'member', NULL, NULL, NULL),
 (99999, NULL, 'END', NULL, NULL, NULL, NULL);
 
--- 插入测试用户数据
-INSERT INTO users (username, usergroup_code, usergroup_name) VALUES
-('member001', 'member', '会员'),
-('trade_junior001', 'trade_dept_junior', '交易部初审'),
-('trade_senior001', 'trade_dept_senior', '交易部复审'),
-('clearing_junior001', 'clearing_dept_junior', '结算部初审'),
-('clearing_senior001', 'clearing_dept_senior', '结算部复审'),
-('manager001', 'management', '领导'); 
+-- 插入测试用户数据（密码都是123456的BCrypt加密）
+INSERT INTO users (username, password, usergroup_code, usergroup_name) VALUES
+('member001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', 'member', '会员'),
+('trade_junior001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', 'trade_dept_junior', '交易部初审'),
+('trade_senior001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', 'trade_dept_senior', '交易部复审'),
+('clearing_junior001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', 'clearing_dept_junior', '结算部初审'),
+('clearing_senior001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', 'clearing_dept_senior', '结算部复审'),
+('manager001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', 'management', '领导'); 

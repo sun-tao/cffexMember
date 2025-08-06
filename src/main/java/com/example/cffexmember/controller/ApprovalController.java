@@ -2,26 +2,47 @@ package com.example.cffexmember.controller;
 
 import com.example.cffexmember.dto.ApiResponse;
 import com.example.cffexmember.dto.ApprovalRequest;
+import com.example.cffexmember.dto.PageResponse;
+import com.example.cffexmember.dto.TaskListItem;
 import com.example.cffexmember.entity.ApprovalHistory;
 import com.example.cffexmember.entity.ApprovalTask;
+import com.example.cffexmember.entity.User;
+import com.example.cffexmember.entity.MembershipApplication;
 import com.example.cffexmember.service.ApprovalService;
+import com.example.cffexmember.service.UserService;
+import com.example.cffexmember.service.MembershipApplicationService;
+//import com.example.cffexmember.util.SecurityUtil;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 审批控制器
  */
 @RestController
-@RequestMapping("/api/approvals")
+@RequestMapping("/")
 @Validated
+@Slf4j
 public class ApprovalController {
     
     @Autowired
     private ApprovalService approvalService;
+
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private MembershipApplicationService applicationService;
+    
+//    @Autowired
+//    private SecurityUtil securityUtil;
     
     /**
      * 审批操作
@@ -29,12 +50,25 @@ public class ApprovalController {
     @PostMapping("/approve")
     public ApiResponse<Boolean> approve(@Valid @RequestBody ApprovalRequest request) {
         try {
+
+            Integer currentUserId = 2;
+            String currentUsername = "test";
+            String currentUserGroupCode = "test";
+            if (currentUserId == null || currentUsername == null || currentUserGroupCode == null) {
+                return ApiResponse.error(401, "用户信息不完整");
+            }
+            
+            // 检查权限：只有审批人员可以操作
+            if ("member".equals(currentUserGroupCode)) {
+                return ApiResponse.error(403, "会员不能进行审批操作");
+            }
+            
             ApprovalHistory history = new ApprovalHistory(
                 request.getApplicationId(),
                 request.getTaskId(),
-                request.getOperatorId(),
-                request.getOperatorName(),
-                request.getOperatorGroupCode(),
+                currentUserId, // 使用当前用户ID
+                currentUsername, // 使用当前用户名
+                currentUserGroupCode, // 使用当前用户组
                 request.getOperationType(),
                 request.getComments()
             );
@@ -47,13 +81,39 @@ public class ApprovalController {
     }
     
     /**
-     * 根据处理人组查询待处理任务
+     * 根据当前用户所处的处理人组，查询待处理的任务
      */
-    @GetMapping("/tasks/pending/{handlerGroupCode}")
-    public ApiResponse<List<ApprovalTask>> getPendingTasksByHandlerGroup(@PathVariable String handlerGroupCode) {
+    @GetMapping("/tasks/queryAll")
+    public ApiResponse<PageResponse<TaskListItem>> getPendingTasksByHandlerGroup(@RequestParam int pageNo, @RequestParam int pageSize) {
         try {
-            List<ApprovalTask> tasks = approvalService.getPendingTasksByHandlerGroup(handlerGroupCode);
-            return ApiResponse.success(tasks);
+            // TODO:根据当前的登陆用户查询所属的用户组
+            int currentUserId = 2;
+            User u = userService.findById(currentUserId);
+            String handlerGroupCode = u.getUsergroupCode();
+            
+            // 获取任务列表
+            List<ApprovalTask> tasks = approvalService.getPendingTasksByHandlerGroup(handlerGroupCode, pageNo, pageSize);
+            long total = approvalService.getTotalPendingTasks(handlerGroupCode);
+            
+            // 转换为TaskListItem列表
+            List<TaskListItem> taskListItems = new ArrayList<>();
+            for (ApprovalTask task : tasks) {
+                // 根据申请ID获取申请信息
+                MembershipApplication application = applicationService.getApplicationById(task.getApplicationId());
+                if (application != null) {
+                    TaskListItem item = new TaskListItem(
+                        String.valueOf(application.getId()),
+                        getMemberNameByApplication(application), // 这里可以根据需要调整字段
+                        application.getApplicantUserName()
+                    );
+                    taskListItems.add(item);
+                }
+            }
+            
+            // 创建分页响应
+            PageResponse<TaskListItem> pageResponse = new PageResponse<>(taskListItems, pageNo, pageSize, total);
+            
+            return ApiResponse.success(pageResponse);
         } catch (Exception e) {
             return ApiResponse.error("查询待处理任务失败: " + e.getMessage());
         }
@@ -96,5 +156,17 @@ public class ApprovalController {
         } catch (Exception e) {
             return ApiResponse.error("查询审批历史失败: " + e.getMessage());
         }
+    }
+
+    private String getMemberNameByApplication(MembershipApplication application){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode formDataNode = objectMapper.readTree(application.getFormData());
+            return formDataNode.has("memberName") ? formDataNode.get("memberName").asText() : "";
+        } catch (Exception e) {
+            // 如果JSON解析失败，创建空的formData
+            log.error("ApprovalController中getMemberNameByApplication的formData的json无法解析");
+        }
+        return "";
     }
 } 

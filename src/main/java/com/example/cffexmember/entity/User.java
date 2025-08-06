@@ -6,14 +6,16 @@ package com.example.cffexmember.entity;
 public class User {
     private Integer id;
     private String username;
+    private String password;
     private String usergroupCode;
     private String usergroupName;
 
     // 构造函数
     public User() {}
 
-    public User(String username, String usergroupCode, String usergroupName) {
+    public User(String username, String password, String usergroupCode, String usergroupName) {
         this.username = username;
+        this.password = password;
         this.usergroupCode = usergroupCode;
         this.usergroupName = usergroupName;
     }
@@ -33,6 +35,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getUsergroupCode() {
@@ -56,6 +66,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", password='***'" +
                 ", usergroupCode='" + usergroupCode + '\'' +
                 ", usergroupName='" + usergroupName + '\'' +
                 '}';

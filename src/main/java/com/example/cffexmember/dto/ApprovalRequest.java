@@ -12,15 +12,6 @@ public class ApprovalRequest {
     @NotNull(message = "任务ID不能为空")
     private Integer taskId;
     
-    @NotNull(message = "操作人ID不能为空")
-    private Integer operatorId;
-    
-    @NotNull(message = "操作人姓名不能为空")
-    private String operatorName;
-    
-    @NotNull(message = "操作人用户组不能为空")
-    private String operatorGroupCode;
-    
     @NotNull(message = "操作类型不能为空")
     private String operationType; // APPROVE, REJECT, RETURN
     
@@ -29,14 +20,9 @@ public class ApprovalRequest {
     // 构造函数
     public ApprovalRequest() {}
 
-    public ApprovalRequest(Integer applicationId, Integer taskId, Integer operatorId, 
-                         String operatorName, String operatorGroupCode, 
-                         String operationType, String comments) {
+    public ApprovalRequest(Integer applicationId, Integer taskId, String operationType, String comments) {
         this.applicationId = applicationId;
         this.taskId = taskId;
-        this.operatorId = operatorId;
-        this.operatorName = operatorName;
-        this.operatorGroupCode = operatorGroupCode;
         this.operationType = operationType;
         this.comments = comments;
     }
@@ -56,30 +42,6 @@ public class ApprovalRequest {
 
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
-    }
-
-    public Integer getOperatorId() {
-        return operatorId;
-    }
-
-    public void setOperatorId(Integer operatorId) {
-        this.operatorId = operatorId;
-    }
-
-    public String getOperatorName() {
-        return operatorName;
-    }
-
-    public void setOperatorName(String operatorName) {
-        this.operatorName = operatorName;
-    }
-
-    public String getOperatorGroupCode() {
-        return operatorGroupCode;
-    }
-
-    public void setOperatorGroupCode(String operatorGroupCode) {
-        this.operatorGroupCode = operatorGroupCode;
     }
 
     public String getOperationType() {
@@ -103,9 +65,6 @@ public class ApprovalRequest {
         return "ApprovalRequest{" +
                 "applicationId=" + applicationId +
                 ", taskId=" + taskId +
-                ", operatorId=" + operatorId +
-                ", operatorName='" + operatorName + '\'' +
-                ", operatorGroupCode='" + operatorGroupCode + '\'' +
                 ", operationType='" + operationType + '\'' +
                 ", comments='" + comments + '\'' +
                 '}';

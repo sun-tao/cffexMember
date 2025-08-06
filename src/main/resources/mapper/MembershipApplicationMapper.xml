@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cffexmember.mapper.MembershipApplicationMapper">
-    
+
+    <sql id="Base_Column_List">
+        id, applicant_user_id, applicant_user_name, form_data, attachment_id,
+        status, current_node_id, return_source_node_id, ctime, mtime
+    </sql>
+
     <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.MembershipApplication">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="applicant_user_id" property="applicantUserId" jdbcType="INTEGER"/>
@@ -14,18 +19,13 @@
         <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
         <result column="mtime" property="mtime" jdbcType="TIMESTAMP"/>
     </resultMap>
-    
-    <sql id="Base_Column_List">
-        id, applicant_user_id, applicant_user_name, form_data, attachment_id, 
-        status, current_node_id, return_source_node_id, ctime, mtime
-    </sql>
-    
+
     <insert id="insert" parameterType="com.example.cffexmember.entity.MembershipApplication" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_membership_application (
             applicant_user_id, applicant_user_name, form_data, attachment_id, 
             status, current_node_id, return_source_node_id, ctime, mtime
         ) VALUES (
-            #{applicantUserId}, #{applicantUserName}, #{formData}, #{attachmentId}, 
+            #{applicantUserId}, #{applicantUserName}, CAST(#{formData} AS jsonb), #{attachmentId},
             #{status}, #{currentNodeId}, #{returnSourceNodeId}, #{ctime}, #{mtime}
         )
     </insert>
@@ -36,21 +36,46 @@
         WHERE id = #{id}
     </select>
     
-    <select id="selectByApplicantUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+<!--    <select id="selectByApplicantUserId"  resultMap="BaseResultMap">-->
+<!--        SELECT <include refid="Base_Column_List"/>-->
+<!--        FROM t_membership_application-->
+<!--        WHERE applicant_user_id = #{applicantUserId}-->
+<!--        and status = #{status}-->
+<!--        ORDER BY ctime DESC-->
+<!--    </select>-->
+
+    <select id="" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_membership_application
-        WHERE applicant_user_id = #{applicantUserId}
+        <where>
+            applicant_user_id = #{applicantUserId}
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
         ORDER BY ctime DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectTotalApplication" resultType="Integer">
+        SELECT count(*)
+        FROM t_membership_application
+        <where>
+            applicant_user_id = #{applicantUserId}
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
     </select>
     
-    <select id="selectByStatus" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByStatus" parameterType="java.lang.String" resultMap="com.example.cffexmember.mapper.MembershipApplicationMapper.BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_membership_application
         WHERE status = #{status}
         ORDER BY ctime DESC
     </select>
     
-    <select id="selectAll" resultMap="BaseResultMap">
+    <select id="selectAll" resultMap="com.example.cffexmember.mapper.MembershipApplicationMapper.BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_membership_application
         ORDER BY ctime DESC
@@ -68,7 +93,7 @@
         UPDATE t_membership_application
         SET applicant_user_id = #{applicantUserId},
             applicant_user_name = #{applicantUserName},
-            form_data = #{formData},
+            form_data = CAST(#{formData} AS jsonb),
             attachment_id = #{attachmentId},
             status = #{status},
             current_node_id = #{currentNodeId},

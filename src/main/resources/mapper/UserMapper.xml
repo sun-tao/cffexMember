@@ -5,19 +5,19 @@
     <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.User">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="username" property="username" jdbcType="VARCHAR"/>
-        <result column="usergroup_code" property="usergroupCode" jdbcType="VARCHAR"/>
-        <result column="usergroup_name" property="usergroupName" jdbcType="VARCHAR"/>
+        <result column="user_group_code" property="usergroupCode" jdbcType="VARCHAR"/>
+        <result column="user_group_name" property="usergroupName" jdbcType="VARCHAR"/>
     </resultMap>
     
     <sql id="Base_Column_List">
-        id, username, usergroup_code, usergroup_name
+        id, username, user_group_code, user_group_name
     </sql>
     
     <insert id="insert" parameterType="com.example.cffexmember.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users (
             username, usergroup_code, usergroup_name
         ) VALUES (
-            #{username}, #{usergroupCode}, #{usergroupName}
+            #{username}, #{password}, #{usergroupCode}, #{usergroupName}
         )
     </insert>
     
@@ -49,6 +49,7 @@
     <update id="update" parameterType="com.example.cffexmember.entity.User">
         UPDATE users
         SET username = #{username},
+            password = #{password},
             usergroup_code = #{usergroupCode},
             usergroup_name = #{usergroupName}
         WHERE id = #{id}

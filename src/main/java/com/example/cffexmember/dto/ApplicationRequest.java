@@ -1,48 +1,51 @@
 package com.example.cffexmember.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 /**
  * 申请请求DTO
  */
 public class ApplicationRequest {
-    @NotNull(message = "申请人ID不能为空")
-    private Integer applicantUserId;
-    
-    @NotNull(message = "申请人姓名不能为空")
-    private String applicantUserName;
-    
     @NotNull(message = "申请表单数据不能为空")
     private String formData;
-    
-    private Integer attachmentId;
+
+    // 定义 attachments 字段
+    private Attachments attachments;
+
+    // getter and setter for formData
+
+    public static class Attachments {
+        private Integer attachmentId;  // 假设 attachmentId 是整数类型
+
+        public Integer getAttachmentId() {
+            return attachmentId;
+        }
+
+        public void setAttachmentId(Integer attachmentId) {
+            this.attachmentId = attachmentId;
+        }
+    }
+
+    // getter and setter for attachments
+    public Attachments getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Attachments attachments) {
+        this.attachments = attachments;
+    }
 
     // 构造函数
     public ApplicationRequest() {}
 
-    public ApplicationRequest(Integer applicantUserId, String applicantUserName, String formData) {
-        this.applicantUserId = applicantUserId;
-        this.applicantUserName = applicantUserName;
+    public ApplicationRequest(String formData) {
         this.formData = formData;
     }
 
     // Getter和Setter方法
-    public Integer getApplicantUserId() {
-        return applicantUserId;
-    }
-
-    public void setApplicantUserId(Integer applicantUserId) {
-        this.applicantUserId = applicantUserId;
-    }
-
-    public String getApplicantUserName() {
-        return applicantUserName;
-    }
-
-    public void setApplicantUserName(String applicantUserName) {
-        this.applicantUserName = applicantUserName;
-    }
-
     public String getFormData() {
         return formData;
     }
@@ -51,21 +54,16 @@ public class ApplicationRequest {
         this.formData = formData;
     }
 
-    public Integer getAttachmentId() {
-        return attachmentId;
-    }
 
-    public void setAttachmentId(Integer attachmentId) {
-        this.attachmentId = attachmentId;
+    public void setAttachmentId(Attachments attachments) {
+        this.attachments = attachments;
     }
 
     @Override
     public String toString() {
         return "ApplicationRequest{" +
-                "applicantUserId=" + applicantUserId +
-                ", applicantUserName='" + applicantUserName + '\'' +
-                ", formData='" + formData + '\'' +
-                ", attachmentId=" + attachmentId +
+                "formData='" + formData + '\'' +
+                ", attachments=" + attachments +
                 '}';
     }
 } 

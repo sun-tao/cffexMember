@@ -1,21 +1,22 @@
 server:
-  port: 8080
+  port: 8088
 
 spring:
   application:
     name: cffexmember
   
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cffexmember?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/cffexmember?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: postgres
+    password: suntao2015
     
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
 mybatis:
+  type-handlers-package: com.example.cffexmember.config
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.example.cffexmember.entity
   configuration:

@@ -25,8 +25,20 @@ public interface MembershipApplicationMapper {
     /**
      * 根据申请人ID查询申请列表
      */
-    List<MembershipApplication> selectByApplicantUserId(@Param("applicantUserId") Integer applicantUserId);
-    
+    List<MembershipApplication> selectByApplicantUserId(
+            @Param("applicantUserId") Integer applicantUserId,
+            @Param("status") String status,
+            @Param("offset") Integer offset,
+            @Param("limit") Integer limit
+    );
+
+    /**
+     * 根据申请人ID查询申请列表
+     */
+    Integer selectTotalApplication(
+            @Param("applicantUserId") Integer applicantUserId,
+            @Param("status") String status
+    );
     /**
      * 根据状态查询申请列表
      */
