@@ -4,6 +4,7 @@ import com.example.cffexmember.dto.ApiResponse;
 import com.example.cffexmember.dto.ApprovalRequest;
 import com.example.cffexmember.dto.PageResponse;
 import com.example.cffexmember.dto.TaskListItem;
+import com.example.cffexmember.dto.ApprovalHistoryItem;
 import com.example.cffexmember.entity.ApprovalHistory;
 import com.example.cffexmember.entity.ApprovalTask;
 import com.example.cffexmember.entity.User;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 
 /**
  * 审批控制器
@@ -152,9 +154,10 @@ public class ApprovalController {
     /**
      * 根据申请ID查询审批历史
      */
-    @GetMapping("/history/application/{applicationId}")
-    public ApiResponse<List<ApprovalHistory>> getHistoryByApplicationId(@PathVariable Integer applicationId) {
+    @GetMapping("/application/queryDetail")
+    public ApiResponse<List<ApprovalHistory>> getHistoryByApplicationId(@RequestParam Integer applicationId) {
         try {
+            // TODO:需要做水平鉴权，申请人必须是自己才能查
             List<ApprovalHistory> history = approvalService.getHistoryByApplicationId(applicationId);
             return ApiResponse.success(history);
         } catch (Exception e) {
@@ -163,14 +166,51 @@ public class ApprovalController {
     }
     
     /**
-     * 根据任务ID查询审批历史
+     * 查询当前用户所在部门的审批历史记录
      */
-    @GetMapping("/history/task/{taskId}")
-    public ApiResponse<List<ApprovalHistory>> getHistoryByTaskId(@PathVariable Integer taskId) {
+    @GetMapping("/task/history")
+    public ApiResponse<PageResponse<ApprovalHistoryItem>> getHistoryByCurrentUserGroup(@RequestParam int pageNo, @RequestParam int pageSize) {
         try {
-            List<ApprovalHistory> history = approvalService.getHistoryByTaskId(taskId);
-            return ApiResponse.success(history);
+            // TODO: 从登录信息中获取当前用户组
+            String currentUserGroupCode = "trade_dept_junior"; // 这里应该从session中获取
+            
+            // 获取审批历史列表
+            List<ApprovalHistory> historyList = approvalService.getHistoryByOperatorGroupCode(currentUserGroupCode, pageNo, pageSize);
+            long total = approvalService.getHistoryCountByOperatorGroupCode(currentUserGroupCode);
+            
+            // 转换为ApprovalHistoryItem列表
+            List<ApprovalHistoryItem> historyItems = new ArrayList<>();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            
+            for (ApprovalHistory history : historyList) {
+                // 获取申请信息
+                MembershipApplication application = applicationService.getApplicationById(history.getApplicationId());
+                String memberName = "";
+                if (application != null) {
+                    memberName = getMemberNameByApplication(application);
+                }
+                
+                // 获取节点名称
+                String nodeName = getNodeNameByUserGroup(history.getOperatorGroupCode());
+                
+                ApprovalHistoryItem item = new ApprovalHistoryItem(
+                    history.getId(),
+                    history.getApplicationId(),
+                    memberName,
+                    nodeName,
+                    history.getOperationType(),
+                    history.getComments(),
+                    formatter.format(history.getCtime())
+                );
+                historyItems.add(item);
+            }
+            
+            // 创建分页响应
+            PageResponse<ApprovalHistoryItem> pageResponse = new PageResponse<>(historyItems, pageNo, pageSize, total);
+            
+            return ApiResponse.success(pageResponse);
         } catch (Exception e) {
+            log.error("查询审批历史失败", e);
             return ApiResponse.error("查询审批历史失败: " + e.getMessage());
         }
     }

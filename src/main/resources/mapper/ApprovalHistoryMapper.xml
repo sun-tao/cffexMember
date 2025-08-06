@@ -53,6 +53,20 @@
         ORDER BY ctime DESC
     </select>
     
+    <select id="selectByOperatorGroupCode" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_history
+        WHERE operator_group_code = #{operatorGroupCode}
+        ORDER BY ctime DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <select id="countByOperatorGroupCode" parameterType="java.lang.String" resultType="long">
+        SELECT COUNT(*)
+        FROM t_approval_history
+        WHERE operator_group_code = #{operatorGroupCode}
+    </select>
+    
     <select id="selectAll" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_approval_history

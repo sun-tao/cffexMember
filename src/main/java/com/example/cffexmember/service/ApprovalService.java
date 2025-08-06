@@ -152,4 +152,19 @@ public class ApprovalService {
     public List<ApprovalHistory> getHistoryByTaskId(Integer taskId) {
         return approvalHistoryMapper.selectByTaskId(taskId);
     }
+    
+    /**
+     * 根据操作人组代码分页查询审批历史
+     */
+    public List<ApprovalHistory> getHistoryByOperatorGroupCode(String operatorGroupCode, int pageNo, int pageSize) {
+        int offset = (pageNo - 1) * pageSize;
+        return approvalHistoryMapper.selectByOperatorGroupCode(operatorGroupCode, offset, pageSize);
+    }
+    
+    /**
+     * 根据操作人组代码查询审批历史总数
+     */
+    public long getHistoryCountByOperatorGroupCode(String operatorGroupCode) {
+        return approvalHistoryMapper.countByOperatorGroupCode(operatorGroupCode);
+    }
 } 

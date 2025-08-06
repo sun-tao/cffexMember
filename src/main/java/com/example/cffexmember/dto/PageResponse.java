@@ -9,18 +9,18 @@ import java.util.List;
 @Data
 public class PageResponse<T> {
     private List<T> content;
-    private int page;
+    private int currentPage;
     private int pageSize;
-    private long total;
+    private long totalElements;
     private int totalPages;
     
     public PageResponse() {}
     
-    public PageResponse(List<T> content, int page, int pageSize, long total) {
+    public PageResponse(List<T> content, int currentPage, int pageSize, long totalElements) {
         this.content = content;
-        this.page = page;
+        this.currentPage = currentPage;
         this.pageSize = pageSize;
-        this.total = total;
-        this.totalPages = (int) Math.ceil((double) total / pageSize);
+        this.totalElements = totalElements;
+        this.totalPages = (int) Math.ceil((double) totalElements / pageSize);
     }
 } 

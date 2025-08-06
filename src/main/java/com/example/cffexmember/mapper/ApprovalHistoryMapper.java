@@ -38,6 +38,18 @@ public interface ApprovalHistoryMapper {
     List<ApprovalHistory> selectByOperatorId(@Param("operatorId") Integer operatorId);
     
     /**
+     * 根据操作人组代码分页查询历史记录
+     */
+    List<ApprovalHistory> selectByOperatorGroupCode(@Param("operatorGroupCode") String operatorGroupCode, 
+                                                   @Param("offset") int offset, 
+                                                   @Param("limit") int limit);
+    
+    /**
+     * 根据操作人组代码查询历史记录总数
+     */
+    long countByOperatorGroupCode(@Param("operatorGroupCode") String operatorGroupCode);
+    
+    /**
      * 查询所有历史记录
      */
     List<ApprovalHistory> selectAll();
