@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cffexmember.mapper.ApprovalTaskMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.ApprovalTask">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="application_id" property="applicationId" jdbcType="INTEGER"/>
+        <result column="node_id" property="nodeId" jdbcType="INTEGER"/>
+        <result column="node_name" property="nodeName" jdbcType="VARCHAR"/>
+        <result column="task_status" property="taskStatus" jdbcType="VARCHAR"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="mtime" property="mtime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, application_id, node_id, node_name, task_status, ctime, mtime
+    </sql>
+    
+    <insert id="insert" parameterType="com.example.cffexmember.entity.ApprovalTask" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_approval_tasks (
+            application_id, node_id, node_name, task_status, ctime, mtime
+        ) VALUES (
+            #{applicationId}, #{nodeId}, #{nodeName}, #{taskStatus}, #{ctime}, #{mtime}
+        )
+    </insert>
+    
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_tasks
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectByApplicationId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_tasks
+        WHERE application_id = #{applicationId}
+        ORDER BY ctime
+    </select>
+    
+    <select id="selectByApplicationIdAndStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_tasks
+        WHERE application_id = #{applicationId} AND task_status = #{taskStatus}
+        LIMIT 1
+    </select>
+    
+    <select id="selectPendingByHandlerGroup" resultMap="BaseResultMap">
+        SELECT t.id, t.application_id, t.node_id, t.node_name, t.task_status, t.ctime, t.mtime
+        FROM t_approval_tasks t
+        INNER JOIN t_process_nodes p ON t.node_id = p.id
+        WHERE p.handler_group_code = #{handlerGroupCode} AND t.task_status = 'PENDING'
+        ORDER BY t.ctime
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <select id="countPendingByHandlerGroup" parameterType="java.lang.String" resultType="long">
+        SELECT COUNT(*)
+        FROM t_approval_tasks t
+        INNER JOIN t_process_nodes p ON t.node_id = p.id
+        WHERE p.handler_group_code = #{handlerGroupCode} AND t.task_status = 'PENDING'
+    </select>
+    
+    <select id="selectPendingByApplicationAndNode" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_tasks
+        WHERE application_id = #{applicationId} 
+        AND node_name = #{nodeName} 
+        AND task_status = 'PENDING'
+        LIMIT 1
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_approval_tasks
+        ORDER BY ctime DESC
+    </select>
+    
+    <update id="updateStatus">
+        UPDATE t_approval_tasks
+        SET task_status = #{taskStatus},
+            mtime = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <update id="update" parameterType="com.example.cffexmember.entity.ApprovalTask">
+        UPDATE t_approval_tasks
+        SET application_id = #{applicationId},
+            node_id = #{nodeId},
+            node_name = #{nodeName},
+            task_status = #{taskStatus},
+            mtime = NOW()
+        WHERE id = #{id}
+    </update>
+    
+</mapper> 

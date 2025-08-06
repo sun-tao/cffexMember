@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cffexmember.mapper.MembershipApplicationMapper">
+
+    <sql id="Base_Column_List">
+        id, applicant_user_id, applicant_user_name, form_data, attachment_id,
+        status, current_node_id, return_source_node_id, ctime, mtime
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.MembershipApplication">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="applicant_user_id" property="applicantUserId" jdbcType="INTEGER"/>
+        <result column="applicant_user_name" property="applicantUserName" jdbcType="VARCHAR"/>
+        <result column="form_data" property="formData" jdbcType="VARCHAR"/>
+        <result column="attachment_id" property="attachmentId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="current_node_id" property="currentNodeId" jdbcType="INTEGER"/>
+        <result column="return_source_node_id" property="returnSourceNodeId" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="mtime" property="mtime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.cffexmember.entity.MembershipApplication" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_membership_application (
+            applicant_user_id, applicant_user_name, form_data, attachment_id, 
+            status, current_node_id, return_source_node_id, ctime, mtime
+        ) VALUES (
+            #{applicantUserId}, #{applicantUserName}, CAST(#{formData} AS jsonb), #{attachmentId},
+            #{status}, #{currentNodeId}, #{returnSourceNodeId}, #{ctime}, #{mtime}
+        )
+    </insert>
+    
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_membership_application
+        WHERE id = #{id}
+    </select>
+    
+<!--    <select id="selectByApplicantUserId"  resultMap="BaseResultMap">-->
+<!--        SELECT <include refid="Base_Column_List"/>-->
+<!--        FROM t_membership_application-->
+<!--        WHERE applicant_user_id = #{applicantUserId}-->
+<!--        and status = #{status}-->
+<!--        ORDER BY ctime DESC-->
+<!--    </select>-->
+
+    <select id="selectByApplicantUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_membership_application
+        <where>
+            applicant_user_id = #{applicantUserId}
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY ctime DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectTotalApplication" resultType="Integer">
+        SELECT count(*)
+        FROM t_membership_application
+        <where>
+            applicant_user_id = #{applicantUserId}
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectByStatus" parameterType="java.lang.String" resultMap="com.example.cffexmember.mapper.MembershipApplicationMapper.BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_membership_application
+        WHERE status = #{status}
+        ORDER BY ctime DESC
+    </select>
+    
+    <select id="selectAll" resultMap="com.example.cffexmember.mapper.MembershipApplicationMapper.BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_membership_application
+        ORDER BY ctime DESC
+    </select>
+    
+    <update id="updateStatus">
+        UPDATE t_membership_application
+        SET status = #{status}, 
+            current_node_id = #{currentNodeId},
+            mtime = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <update id="update" parameterType="com.example.cffexmember.entity.MembershipApplication">
+        UPDATE t_membership_application
+        SET applicant_user_id = #{applicantUserId},
+            applicant_user_name = #{applicantUserName},
+            form_data = CAST(#{formData} AS jsonb),
+            attachment_id = #{attachmentId},
+            status = #{status},
+            current_node_id = #{currentNodeId},
+            return_source_node_id = #{returnSourceNodeId},
+            mtime = NOW()
+        WHERE id = #{id}
+    </update>
+    
+</mapper> 

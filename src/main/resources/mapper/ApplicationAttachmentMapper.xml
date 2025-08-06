@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cffexmember.mapper.ApplicationAttachmentMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.cffexmember.entity.ApplicationAttachment">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="storage_path" property="storagePath" jdbcType="VARCHAR"/>
+        <result column="download_url" property="downloadUrl" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, file_name, storage_path, download_url
+    </sql>
+    
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_application_attachments
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectByApplicationId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_application_attachments
+        WHERE attachment_id IN (
+            SELECT attachment_id 
+            FROM t_membership_application 
+            WHERE id = #{applicationId}
+        )
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_application_attachments
+        ORDER BY id
+    </select>
+    
+    <insert id="insert" parameterType="com.example.cffexmember.entity.ApplicationAttachment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_application_attachments (
+            attachment_id, file_name, storage_path, download_url
+        ) VALUES (
+            #{attachmentId}, #{fileName}, #{storagePath}, #{downloadUrl}
+        )
+    </insert>
+    
+    <update id="update" parameterType="com.example.cffexmember.entity.ApplicationAttachment">
+        UPDATE t_application_attachments
+        SET attachment_id = #{attachmentId},
+            file_name = #{fileName},
+            storage_path = #{storagePath},
+            download_url = #{downloadUrl}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        DELETE FROM t_application_attachments
+        WHERE id = #{id}
+    </delete>
+    
+</mapper> 
