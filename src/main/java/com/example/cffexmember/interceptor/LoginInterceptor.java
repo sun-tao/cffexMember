@@ -21,12 +21,11 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private UserService userService;
 
-    public Logger logger;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cookie[] cookies = request.getCookies();
-        logger.info("Intercepting path: {}", request.getRequestURI());
+        log.info("Intercepting path: {}", request.getRequestURI());
         if (handler instanceof ResourceHttpRequestHandler) {
             return true;
         }
@@ -37,7 +36,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 //有登录，则放行
-                if ("isLogin".equals(cookie.getName())) {
+                if ("cookie".equals(cookie.getName())) {
                     cookie.setMaxAge(30 * 60);
                     response.addCookie(cookie);
                     return true;
@@ -45,7 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
         }
         //没有登录，跳转到登录页
-        response.sendRedirect("/cffex-member/login");
+        response.sendRedirect("/login");
         return false;
     }
 

@@ -27,7 +27,7 @@ public class UserService {
     /**
      * 根据用户名查询用户
      */
-    public LoginUser findByUsername(String username) {
+    public User findByUsername(String username) {
         return userMapper.findByUsername(username);
     }
     
@@ -64,8 +64,8 @@ public class UserService {
                      HttpSession session,
                      HttpServletRequest request,
                      HttpServletResponse response){
-        Result<LoginUser> result = new Result<>();
-        LoginUser user = userMapper.findByUsername(username);
+        Result<User> result = new Result<>();
+        User user = userMapper.findByUsername(username);
         if (user == null) {
             result.setCode(-1);
             result.setMessage("用户名不存在");

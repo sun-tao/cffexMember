@@ -60,8 +60,8 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="findByUsername" resultType="com.example.cffexmember.entity.LoginUser">
-        SELECT username, password FROM users WHERE username = #{username};
+    <select id="findByUsername" resultType="com.example.cffexmember.entity.User">
+        SELECT username, password, usergroup_code, usergroup_name FROM users WHERE username = #{username};
     </select>
 
 

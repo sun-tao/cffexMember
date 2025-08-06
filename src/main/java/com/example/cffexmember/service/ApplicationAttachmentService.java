@@ -3,8 +3,12 @@ package com.example.cffexmember.service;
 import com.example.cffexmember.entity.ApplicationAttachment;
 import com.example.cffexmember.mapper.ApplicationAttachmentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -12,6 +16,9 @@ import java.util.List;
  */
 @Service
 public class ApplicationAttachmentService {
+
+    @Value("${file.upload-dir}")
+    private String uploadFilePath;
     
     @Autowired
     private ApplicationAttachmentMapper attachmentMapper;
@@ -57,5 +64,21 @@ public class ApplicationAttachmentService {
      */
     public List<ApplicationAttachment> getAllAttachments() {
         return attachmentMapper.selectAll();
+    }
+
+    public ApplicationAttachment saveAttachment(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        String storagePath = uploadFilePath + fileName;
+        try {
+            file.transferTo(new File(storagePath));
+            ApplicationAttachment attachment = new ApplicationAttachment();
+            attachment.setFileName(fileName);
+            attachment.setStoragePath(storagePath);
+            attachment.setDownloadUrl("");
+            attachmentMapper.insert(attachment);
+            return attachment;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store file " + fileName, e);
+        }
     }
 } 
