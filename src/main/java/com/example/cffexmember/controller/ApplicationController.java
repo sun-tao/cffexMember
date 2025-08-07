@@ -47,13 +47,13 @@ public class ApplicationController {
      * 提交申请
      */
     @PostMapping("/application/submit")
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     public ApiResponse<MembershipApplication> submitApplication(@Valid @RequestBody ApplicationRequest request,HttpServletRequest httpServletRequest) {
         try {
             // TODO: 从session中拿
-            CookieUtil cookieUtil = new CookieUtil();
-            String username = cookieUtil.readCookieValue(httpServletRequest, "cookie");
+//            CookieUtil cookieUtil = new CookieUtil();
+            String username = "member001";
             User currUser = userService.findByUsername(username);
-
             log.debug("会员创建申请 {}",request);
             int currentUserId = currUser.getId();
             String currentUsername = currUser.getUsername();
@@ -61,7 +61,7 @@ public class ApplicationController {
             MembershipApplication application = new MembershipApplication(
                 currentUserId, // 使用当前用户ID
                 currentUsername, // 使用当前用户名
-                request.getFormData()
+                request.getFormData().toString()
             );
             application.setAttachmentId(request.getAttachments().getAttachmentId());
             

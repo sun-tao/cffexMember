@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -51,7 +52,15 @@ public class UserController {
             data.put("token", "mock_token_" + System.currentTimeMillis());
             data.put("userInfo", userInfo);
 
+            session.setAttribute("user",username);
+
             result.setData(data);
+            Cookie cookie = new Cookie("myCookie", "cookie");
+            cookie.setPath("/");
+            cookie.setHttpOnly(false); // 如果你希望前端 JS 读取这个 cookie，可以设为 false
+            cookie.setMaxAge(60 * 60 * 24); // 有效期一天，单位是秒
+            cookie.setDomain("localhost");
+            response.addCookie(cookie);
         }
         return result;
     }

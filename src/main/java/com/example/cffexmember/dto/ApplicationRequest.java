@@ -9,8 +9,10 @@ import java.util.Map;
  * 申请请求DTO
  */
 public class ApplicationRequest {
-    @NotNull(message = "申请表单数据不能为空")
-    private String formData;
+//    @NotNull(message = "申请表单数据不能为空")
+//    private String formData;
+
+    private JsonNode formData;
 
     // 定义 attachments 字段
     private Attachments attachments;
@@ -41,16 +43,16 @@ public class ApplicationRequest {
     // 构造函数
     public ApplicationRequest() {}
 
-    public ApplicationRequest(String formData) {
+    public ApplicationRequest(JsonNode formData) {
         this.formData = formData;
     }
 
     // Getter和Setter方法
-    public String getFormData() {
+    public JsonNode getFormData() {
         return formData;
     }
 
-    public void setFormData(String formData) {
+    public void setFormData(JsonNode formData) {
         this.formData = formData;
     }
 
@@ -58,6 +60,7 @@ public class ApplicationRequest {
     public void setAttachmentId(Attachments attachments) {
         this.attachments = attachments;
     }
+
 
     @Override
     public String toString() {
