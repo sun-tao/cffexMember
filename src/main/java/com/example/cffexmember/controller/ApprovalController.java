@@ -106,11 +106,13 @@ public class ApprovalController {
      * 根据当前用户所处的处理人组，查询待处理的任务
      */
     @GetMapping("/tasks/queryAll")
-    public ApiResponse<PageResponse<TaskListItem>> getPendingTasksByHandlerGroup(@RequestParam int pageNo, @RequestParam int pageSize) {
+    public ApiResponse<PageResponse<TaskListItem>> getPendingTasksByHandlerGroup(@RequestParam(required = false) String username) {
         try {
             // TODO:根据当前的登陆用户查询所属的用户组
-            int currentUserId = 2;
-            User u = userService.findById(currentUserId);
+//            int currentUserId = 2;
+            int pageNo = 1;
+            int pageSize = 50;
+            User u = userService.findByUsername(username);
             String handlerGroupCode = u.getUsergroupCode();
             
             // 获取任务列表
@@ -119,6 +121,7 @@ public class ApprovalController {
             
             // 转换为TaskListItem列表
             List<TaskListItem> taskListItems = new ArrayList<>();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (ApprovalTask task : tasks) {
                 // 根据申请ID获取申请信息
                 MembershipApplication application = applicationService.getApplicationById(task.getApplicationId());
@@ -126,7 +129,8 @@ public class ApprovalController {
                     TaskListItem item = new TaskListItem(
                         String.valueOf(application.getId()),
                         getMemberNameByApplication(application), // 这里可以根据需要调整字段
-                        application.getApplicantUserName()
+                        application.getApplicantUserName(),
+                        formatter.format(application.getCtime())
                     );
                     taskListItems.add(item);
                 }
