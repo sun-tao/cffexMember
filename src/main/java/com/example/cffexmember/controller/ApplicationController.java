@@ -4,9 +4,12 @@ import com.example.cffexmember.dto.*;
 import com.example.cffexmember.entity.ApplicationRecord;
 import com.example.cffexmember.entity.MembershipApplication;
 import com.example.cffexmember.entity.ApplicationAttachment;
+import com.example.cffexmember.entity.User;
 import com.example.cffexmember.service.MembershipApplicationService;
 import com.example.cffexmember.service.ApplicationAttachmentService;
 //import com.example.cffexmember.util.SecurityUtil;
+import com.example.cffexmember.service.UserService;
+import com.example.cffexmember.util.CookieUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,16 +40,23 @@ public class ApplicationController {
     @Autowired
     private ApplicationAttachmentService attachmentService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 提交申请
      */
     @PostMapping("/application/submit")
-    public ApiResponse<MembershipApplication> submitApplication(@Valid @RequestBody ApplicationRequest request) {
+    public ApiResponse<MembershipApplication> submitApplication(@Valid @RequestBody ApplicationRequest request,HttpServletRequest httpServletRequest) {
         try {
             // TODO: 从session中拿
+            CookieUtil cookieUtil = new CookieUtil();
+            String username = cookieUtil.readCookieValue(httpServletRequest, "cookie");
+            User currUser = userService.findByUsername(username);
+
             log.debug("会员创建申请 {}",request);
-            int currentUserId = 1;
-            String currentUsername = "test";
+            int currentUserId = currUser.getId();
+            String currentUsername = currUser.getUsername();
             
             MembershipApplication application = new MembershipApplication(
                 currentUserId, // 使用当前用户ID
@@ -117,10 +128,13 @@ public class ApplicationController {
      * 根据申请人ID查询申请列表
      */
     @GetMapping("/application/queryAll")
-    public ApiResponse<PageResponse<ApplicationRecord>> getApplicationsByApplicantUserId(@RequestParam(required = false) String status,@RequestParam int pageNo,@RequestParam int pageSize) {
+    public ApiResponse<PageResponse<ApplicationRecord>> getApplicationsByApplicantUserId(@RequestParam(required = false) String status, @RequestParam int pageNo, @RequestParam int pageSize, HttpServletRequest request) {
         try {
             // TODO:从session中拿,先mock
-            int applicantUserId = 1; // 会员
+            CookieUtil cookieUtil = new CookieUtil();
+            String username = cookieUtil.readCookieValue(request, "cookie");
+            User currUser = userService.findByUsername(username);
+            int applicantUserId = currUser.getId(); // 会员
             List<MembershipApplication> applications = applicationService.getApplicationsByApplicantUserId(applicantUserId,status,pageNo,pageSize);
             int total = applicationService.getTotalApplication(applicantUserId,status);
             List<ApplicationRecord> applicationRecords = new ArrayList<>();

@@ -10,15 +10,15 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, username, user_group_code, user_group_name
+        id, username, password, user_group_code, user_group_name
     </sql>
 
     <insert id="insert" parameterType="com.example.cffexmember.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users (
             username, usergroup_code, usergroup_name
         ) VALUES (
-            #{username}, #{password}, #{usergroupCode}, #{usergroupName}
-        )
+                     #{username}, #{password}, #{usergroupCode}, #{usergroupName}
+                 )
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -60,9 +60,8 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="findByUsername" resultType="com.example.cffexmember.entity.User">
-        SELECT username, password, usergroup_code, usergroup_name FROM users WHERE username = #{username};
+    <select id="findByUsername" resultMap= "BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM users WHERE username = #{username};
     </select>
-
 
 </mapper>
