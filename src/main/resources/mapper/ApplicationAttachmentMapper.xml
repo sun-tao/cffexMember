@@ -22,7 +22,7 @@
     <select id="selectByApplicationId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM t_application_attachments
-        WHERE attachment_id IN (
+        WHERE id IN (
             SELECT attachment_id 
             FROM t_membership_application 
             WHERE id = #{applicationId}
@@ -37,15 +37,15 @@
     
     <insert id="insert" parameterType="com.example.cffexmember.entity.ApplicationAttachment" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_application_attachments (
-            attachment_id, file_name, storage_path, download_url
+            file_name, storage_path, download_url
         ) VALUES (
-            #{attachmentId}, #{fileName}, #{storagePath}, #{downloadUrl}
+            #{fileName}, #{storagePath}, #{downloadUrl}
         )
     </insert>
     
     <update id="update" parameterType="com.example.cffexmember.entity.ApplicationAttachment">
         UPDATE t_application_attachments
-        SET attachment_id = #{attachmentId},
+        SET id = #{id},
             file_name = #{fileName},
             storage_path = #{storagePath},
             download_url = #{downloadUrl}
