@@ -7,17 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
+@RestController
+@RequestMapping("/")
 public class AttachmentController {
 
     @Autowired
     private ApplicationAttachmentService applicationAttachmentService;
 
-    @Value("${file.upload.url}")
-    private String uploadFilePath;
+    // @Value("${file.upload.url}")
+    // private String uploadFilePath;
 
     @PostMapping("/uploadfile")
     public Result<?> uploadFile(@RequestParam("file") MultipartFile file) {
