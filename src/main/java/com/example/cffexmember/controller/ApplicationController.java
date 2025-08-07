@@ -128,11 +128,13 @@ public class ApplicationController {
      * 根据申请人ID查询申请列表
      */
     @GetMapping("/application/queryAll")
-    public ApiResponse<PageResponse<ApplicationRecord>> getApplicationsByApplicantUserId(@RequestParam(required = false) String status, @RequestParam int pageNo, @RequestParam int pageSize, HttpServletRequest request) {
+    public ApiResponse<PageResponse<ApplicationRecord>> getApplicationsByApplicantUserId(@RequestParam(required = false) String status,  HttpServletRequest request) {
         try {
             // TODO:从session中拿,先mock
-            CookieUtil cookieUtil = new CookieUtil();
-            String username = cookieUtil.readCookieValue(request, "cookie");
+            int pageNo = 1;
+            int pageSize = 5;
+//            CookieUtil cookieUtil = new CookieUtil();
+            String username = "member001";
             User currUser = userService.findByUsername(username);
             int applicantUserId = currUser.getId(); // 会员
             List<MembershipApplication> applications = applicationService.getApplicationsByApplicantUserId(applicantUserId,status,pageNo,pageSize);
