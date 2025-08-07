@@ -8,5 +8,5 @@ public class ApplicationRecord {
     int applicationId;
     String memberName;
     String status;
-    String submitAt;
+    String submittedAt;
 }

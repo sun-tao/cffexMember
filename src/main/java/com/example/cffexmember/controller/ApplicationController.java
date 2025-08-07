@@ -76,9 +76,9 @@ public class ApplicationController {
      * 根据ID查询申请详情
      */
     @GetMapping("/application/queryone")
-    public ApiResponse<ApplicationDetailResponse> getApplicationById(@RequestParam Integer id) {
+    public ApiResponse<ApplicationDetailResponse> getApplicationById(@RequestParam String id) {
         try {
-            MembershipApplication application = applicationService.getApplicationById(id);
+            MembershipApplication application = applicationService.getApplicationById(Integer.valueOf(id));
             if (application == null) {
                 return ApiResponse.error(404, "申请不存在");
             }
@@ -92,10 +92,10 @@ public class ApplicationController {
             // 格式化提交时间
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             response.setSubmittedAt(formatter.format(application.getCtime()));
-            response.setFormData(application.getFormData());
+            ObjectMapper objectMapper = new ObjectMapper();
+            response.setFormData(objectMapper.readTree(application.getFormData()));
             // 解析formData JSON
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode formDataNode = objectMapper.readTree(application.getFormData());
                 response.setMemberName(formDataNode.has("memberName") ? formDataNode.get("memberName").asText() : "");
             } catch (Exception e) {
@@ -132,7 +132,7 @@ public class ApplicationController {
         try {
             // TODO:从session中拿,先mock
             int pageNo = 1;
-            int pageSize = 5;
+            int pageSize = 50;
 //            CookieUtil cookieUtil = new CookieUtil();
             String username = "member001";
             User currUser = userService.findByUsername(username);
@@ -149,7 +149,7 @@ public class ApplicationController {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 // 转换为字符串
                 String dateString = formatter.format(application.getCtime());
-                applicationRecord.setSubmitAt(dateString);
+                applicationRecord.setSubmittedAt(dateString);
                 applicationRecords.add(applicationRecord);
             }
             // 创建分页响应

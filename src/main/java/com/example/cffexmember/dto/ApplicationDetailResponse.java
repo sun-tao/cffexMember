@@ -1,5 +1,6 @@
 package com.example.cffexmember.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class ApplicationDetailResponse {
     private String memberName;
     private String status;
     private String submittedAt;
-    private String formData;
+    private JsonNode formData;
     private List<Attachment> attachments;
 
 //    @Data
