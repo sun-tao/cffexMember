@@ -54,13 +54,16 @@ public class ApprovalController {
      * 审批操作
      */
     @PostMapping("/approve")
-    public ApiResponse<Boolean> approve(@Valid @RequestBody ApprovalRequest request) {
+    public ApiResponse<Boolean> approve(@Valid @RequestBody ApprovalRequest request,@RequestParam(required = false) String username) {
         try {
             // TODO: 从登陆信息中获取用户信息
-            Integer currentUserId = 6;
-            String currentUsername = "manager001";
-            String currentUserGroupCode = "management";
-            
+
+            User user = userService.findByUsername(username);
+
+            Integer currentUserId = user.getId();
+            String currentUsername = user.getUsername();
+            String currentUserGroupCode = user.getUsergroupCode();
+
             if (currentUserId == null || currentUsername == null || currentUserGroupCode == null) {
                 return ApiResponse.error(401, "用户信息不完整");
             }

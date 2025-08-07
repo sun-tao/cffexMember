@@ -76,9 +76,9 @@ public class ApplicationController {
      * 根据ID查询申请详情
      */
     @GetMapping("/application/queryone")
-    public ApiResponse<ApplicationDetailResponse> getApplicationById(@RequestParam String id) {
+    public ApiResponse<ApplicationDetailResponse> getApplicationById(@RequestParam String applicationId) {
         try {
-            MembershipApplication application = applicationService.getApplicationById(Integer.valueOf(id));
+            MembershipApplication application = applicationService.getApplicationById(Integer.valueOf(applicationId));
             if (application == null) {
                 return ApiResponse.error(404, "申请不存在");
             }
